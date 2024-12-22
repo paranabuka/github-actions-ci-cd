@@ -8,11 +8,11 @@ jest.mock("../src/utils/flagsmith", () => {
       Promise.resolve({
         isFeatureEnabled: () => {
           return true;
-        }
-      })
-    )
-  }
-})
+        },
+      }),
+    ),
+  };
+});
 
 describe("Home", () => {
   it("renders a heading", async () => {
