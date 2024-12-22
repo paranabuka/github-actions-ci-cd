@@ -38,8 +38,8 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Install plawright browsers
-        run: npx plawright install --with-deps
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
       - name: Run e2e tests
         run: npm run test:e2e
         env:
