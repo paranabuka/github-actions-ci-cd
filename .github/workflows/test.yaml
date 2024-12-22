@@ -21,10 +21,6 @@ jobs:
         run: npm run lint
       - name: Check Type errors
         run: npm run typecheck
-      - name: Debugging
-        run: |
-          echo ${{ github.env }}
-          echo $FLAGSMITH_KEY
       - name: Build project
         run: npm run build
       - uses: actions/upload-artifact@v3
