@@ -27,13 +27,13 @@ jobs:
         with:
           name: build
           path: .next/
+      - name: Run unit tests
+        run: npm run test
       - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: coverage
           path: coverage/
-      - name: Run unit tests
-        run: npm run test
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
