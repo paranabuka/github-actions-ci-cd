@@ -23,10 +23,6 @@ jobs:
         run: npm run typecheck
       - name: Build project
         run: npm run build
-      - name: Debugging artifacts
-        run: |
-          echo ${{ github.workspace }}
-          ls -a ${{ github.workspace }}/.next
       - uses: actions/upload-artifact@v3
         with:
           name: build
