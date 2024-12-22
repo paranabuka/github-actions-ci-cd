@@ -23,15 +23,12 @@ jobs:
         run: npm run lint
       - name: Check Type errors
         run: npm run typecheck
-      - name: Debugging
-        run: |
-          echo $FLAGSMITH_KEY
       - name: Build project
         run: npm run build
       - uses: actions/upload-artifact@v3
         with:
           name: build
-          path: ${{ github.workspace }}/.next
+          path: .next/
       - name: Run unit tests
         run: npm run test
       - uses: actions/upload-artifact@v3
@@ -46,9 +43,7 @@ jobs:
       - name: Install playwright browsers
         run: npx playwright install --with-deps
       - name: Run e2e tests
-        run: |
-          echo $FLAGSMITH_KEY
-          npm run test:e2e
+        run: npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: always()
         with:
