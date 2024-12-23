@@ -1,5 +1,11 @@
 # nextjs-starter
 
+## 0.2.2
+
+### Patch Changes
+
+- c47a8ab: Fix CD notification messages
+
 ## 0.2.1
 
 ### Patch Changes
