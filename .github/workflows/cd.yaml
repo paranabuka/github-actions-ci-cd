@@ -10,8 +10,8 @@ concurrency:
 jobs:
   create-version-pr-or-release:
     runs-on: ubuntu-22.04
-    # env:
-    #   FLAGSMITH_KEY: ${{secrets.FLAGSMITH_KEY}}
+    outputs:
+      should-deploy: ${{steps.changesets.outputs.hasChangesets == 'false'}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.CHANGESETS_TOKEN}}
       - run: echo '${{toJson(steps.changesets.outputs)}}'
-      - name: Notify on Slack
+      - name: Notify on Slack when release PR is created
         if: steps.changesets.outputs.pullRequestNumber
         uses: slackapi/slack-github-action@v1.24.0
         with:
@@ -49,16 +49,46 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-      # - name: Check formatting
-      #   run: npm run format
-      # - name: Check ESLint errors
-      #   run: npm run lint
-      # - name: Check Type errors
-      #   run: npm run typecheck
-      # - name: Build project
-      #   run: npm run build
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: build
-      #     include-hidden-files: true
-      #     path: .next/
+      - name: Set release version
+        id: set-version
+        run: |
+          version=${{fromJson(steps.changesets.outputs.publishedPackages)[0].version}}
+          echo "version=$version" >> GITHUB_OUTPUT
+      - name: Notify on Slack when new release is created
+        if: steps.changesets.outputs.published == 'true'
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "⌛ *<https://github.com/${{github.repository}}/releases/tag/v${{steps.set-version.outputs.version}}|Version ${{steps.set-version.outputs.version}}>* Released! Deployment should be in progress."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  run-tests:
+    needs: create-version-pr-or-release
+    if: needs.create-version-pr-or-release.outputs.should-deploy == 'true'
+    uses: ./.github/workflows/test.yaml
+    secrets: inherit
+  deploy-to-staging:
+    needs: run-tests
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
+    with:
+      aws-eb-env: ${{vars.AWS_EB_STAGING_ENV}}
+      github-env: "staging"
+  deploy-to-production:
+    needs: run-tests
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
+    with:
+      aws-eb-env: ${{vars.AWS_EB_PRODUCTION_ENV}}
+      github-env: "production"
