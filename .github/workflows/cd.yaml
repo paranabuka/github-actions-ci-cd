@@ -29,7 +29,8 @@ jobs:
           publish: npx changeset tag
         env:
           GITHUB_TOKEN: ${{secrets.CHANGESETS_TOKEN}}
-      - run: echo '${{toJson(steps.changesets.outputs)}}'
+      - name: Changesets (outputs)
+        run: echo '${{toJson(steps.changesets.outputs)}}'
       - name: Notify on Slack when release PR is created
         if: steps.changesets.outputs.pullRequestNumber
         uses: slackapi/slack-github-action@v1.24.0
@@ -52,9 +53,7 @@ jobs:
       - name: Set release version
         if: steps.changesets.outputs.published == 'true'
         id: set-version
-        run: |
-          version=${{fromJson(steps.changesets.outputs.publishedPackages)[0].version}}
-          echo "version=$version" >> GITHUB_OUTPUT
+        run: echo "version=${{fromJson(steps.changesets.outputs.publishedPackages)[0].version}}" >> GITHUB_OUTPUT
       - name: Notify on Slack when new release is created
         if: steps.changesets.outputs.published == 'true'
         uses: slackapi/slack-github-action@v1.24.0
