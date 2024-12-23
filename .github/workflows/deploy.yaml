@@ -92,6 +92,9 @@ jobs:
           --platform "${{vars.AWS_EB_PLATFORM}}" \
           --region ${{vars.AWS_REGION}}
       - name: Setup storage settings
+        if: >
+          steps.get-eb-env-name.outputs.aws_eb_env == 'None' ||
+          steps.get-eb-env-name.outputs.aws_eb_env_status == 'Terminate'
         run: |
           touch .elasticbeanstalk/storage.config
           echo "option_settings:" >> .elasticbeanstalk/storage.config
