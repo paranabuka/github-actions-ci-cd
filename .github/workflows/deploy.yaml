@@ -35,6 +35,8 @@ jobs:
     environment:
       name: ${{inputs.github-env}}
       url: ${{steps.get-eb-env-cname.outputs.aws_eb_env_cname}}
+    env:
+      FLAGSMITH_KEY: ${{secrets.FLAGSMITH_KEY}}
     steps:
       - name: Avoid deploying to production using non-production env
         if: >
