@@ -6,7 +6,7 @@ jobs:
   test-and-build:
     runs-on: ubuntu-22.04
     env:
-      FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
+      FLAGSMITH_KEY: ${{secrets.FLAGSMITH_KEY}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{secrets.CODECOV_TOKEN}}
       - name: Resolve Playwright version
         run: |
           PLAYWRIGHT_VERSION=$(npm ll -p --depth=0 | grep @playwright/test | sed 's/.*@//')
@@ -51,7 +51,7 @@ jobs:
         id: cache-playwright
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-browsers-${{ env.PLAYWRIGHT_VERSION }}
+          key: playwright-browsers-${{env.PLAYWRIGHT_VERSION}}
       - name: Install playwright browsers
         if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
@@ -73,11 +73,11 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🔴 *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} workflow run>* failed."
+                    "text": "🔴 *<https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}|${{github.workflow}} workflow run>* failed."
                   }
                 }
               ]
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
