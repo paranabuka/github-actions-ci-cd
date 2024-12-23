@@ -5,6 +5,8 @@ on:
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    env:
+      FLAGSMITH_KEY: ${{ secrets.FLAGSMITH_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -27,6 +29,8 @@ jobs:
         with:
           name: build
           path: .next/
+      - name: Run unit tests
+        run: npm run test
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -36,8 +40,8 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-      - name: Install plawright browsers
-        run: npx plawright install --with-deps
+      - name: Install playwright browsers
+        run: npx playwright install --with-deps
       - name: Run e2e tests
         run: npm run test:e2e
       - uses: actions/upload-artifact@v3
@@ -46,8 +50,21 @@ jobs:
           name: playwright-report
           path: playwright-report/
       - name: Send a Slack message on failure
-        uses: slackapi/slack-github-action@v2
+        uses: slackapi/slack-github-action@v1.24.0
         if: failure()
         with:
-          payload-file-path: "./.github/slack/test-failure-slack-payload.json"
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🔴 *<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|${{ github.workflow }} workflow run>* failed."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
