@@ -93,24 +93,26 @@ jobs:
           eb init ${{vars.AWS_EB_APP_NAME}} \
           --platform "${{vars.AWS_EB_PLATFORM}}" \
           --region ${{vars.AWS_REGION}}
-      - name: Setup storage settings
+      - name: Setup EB launch configuration template
         if: >
           steps.get-eb-env-name.outputs.aws_eb_env == 'None' ||
           steps.get-eb-env-status.outputs.aws_eb_env_status == 'Terminated'
         run: |
-          touch .elasticbeanstalk/storage.config
-          echo "option_settings:" >> .elasticbeanstalk/storage.config
-          echo "  aws:autoscaling:launchconfiguration:" >> .elasticbeanstalk/storage.config
-          echo "    RootVolumeType: gp3" >> .elasticbeanstalk/storage.config
+          mkdir .ebextensions
+          touch .ebextensions/storage.config
+          echo "option_settings:" >> .ebextensions/storage.config
+          echo "  aws:autoscaling:launchconfiguration:" >> .ebextensions/storage.config
+          echo "    DisableIMDSv1: true" >> .ebextensions/storage.config
+          echo "    RootVolumeType: ${{vars.AWS_EB_ROOT_VOLUME_TYPE}}" >> .ebextensions/storage.config
       - name: Create a new environment
         if: >
           steps.get-eb-env-name.outputs.aws_eb_env == 'None' ||
           steps.get-eb-env-status.outputs.aws_eb_env_status == 'Terminated'
         run: |
           eb create ${{inputs.aws-eb-env}} \
-          --instance-types ${{vars.AWS_EB_ENV_INSTANCE_TYPES}} \
-          --cname ${{inputs.aws-eb-env}} \
-          --envvars FLAGSMITH_KEY=${{env.FLAGSMITH_KEY}}
+            --instance-types ${{vars.AWS_EB_ENV_INSTANCE_TYPES}} \
+            --cname ${{inputs.aws-eb-env}} \
+            --envvars FLAGSMITH_KEY=${{env.FLAGSMITH_KEY}}
       - name: Deploy on existing environment
         if: >
           steps.get-eb-env-name.outputs.aws_eb_env == inputs.aws-eb-env ||
@@ -120,10 +122,10 @@ jobs:
         id: get-eb-env-cname
         run: |
           echo "aws_eb_env_cname=$(aws elasticbeanstalk describe-environments \
-          --application-name ${{vars.AWS_EB_APP_NAME}} \
-          --environment-names ${{inputs.aws-eb-env}} \
-          --query "Environments[0].CNAME" \
-          --output text)" >> $GITHUB_OUTPUT
+            --application-name ${{vars.AWS_EB_APP_NAME}} \
+            --environment-names ${{inputs.aws-eb-env}} \
+            --query "Environments[0].CNAME" \
+            --output text)" >> $GITHUB_OUTPUT
       - name: Notify on Slack
         uses: slackapi/slack-github-action@v1.24.0
         continue-on-error: true
