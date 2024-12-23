@@ -91,6 +91,12 @@ jobs:
           eb init ${{vars.AWS_EB_APP_NAME}} \
           --platform "${{vars.AWS_EB_PLATFORM}}" \
           --region ${{vars.AWS_REGION}}
+      - name: Setup storage settings
+        run: |
+          touch .elasticbeanstalk/storage.config
+          echo "option_settings:" >> .elasticbeanstalk/storage.config
+          echo "  aws:autoscaling:launchconfiguration:" >> .elasticbeanstalk/storage.config
+          echo "    RootVolumeType: gp3" >> .elasticbeanstalk/storage.config
       - name: Create a new environment
         if: >
           steps.get-eb-env-name.outputs.aws_eb_env == 'None' ||
