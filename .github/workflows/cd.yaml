@@ -1,0 +1,64 @@
+name: CD
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{github.workflow}}-${{github.ref}}
+  cancel-in-progress: true
+
+jobs:
+  create-version-pr-or-release:
+    runs-on: ubuntu-22.04
+    # env:
+    #   FLAGSMITH_KEY: ${{secrets.FLAGSMITH_KEY}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+      - name: Install dependencies
+        run: npm ci
+      - name: Create version PR or Github release
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: npx changeset tag
+        env:
+          GITHUB_TOKEN: ${{secrets.CHANGESETS_TOKEN}}
+      - run: echo '${{toJson(steps.changesets.outputs)}}'
+      - name: Notify on Slack
+        if: steps.changesets.outputs.pullRequestNumber
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🔖 *<https://github.com/${{github.repository}}/pull/${{steps.changesets.outputs.pullRequestNumber}}|Version Pull Request>* was updated. Review and merge it to create a new release and deployment."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      # - name: Check formatting
+      #   run: npm run format
+      # - name: Check ESLint errors
+      #   run: npm run lint
+      # - name: Check Type errors
+      #   run: npm run typecheck
+      # - name: Build project
+      #   run: npm run build
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: build
+      #     include-hidden-files: true
+      #     path: .next/
