@@ -115,7 +115,7 @@ jobs:
             --envvars FLAGSMITH_KEY=${{env.FLAGSMITH_KEY}}
       - name: Deploy on existing environment
         if: >
-          steps.get-eb-env-name.outputs.aws_eb_env == inputs.aws-eb-env ||
+          steps.get-eb-env-name.outputs.aws_eb_env == inputs.aws-eb-env &&
           steps.get-eb-env-status.outputs.aws_eb_env_status != 'Terminated'
         run: eb deploy ${{inputs.aws-eb-env}}
       - name: Get EB env CNAME
