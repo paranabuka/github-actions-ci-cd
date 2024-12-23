@@ -138,7 +138,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🔴 Deployment to AWS EB environment *${{inputs.aws-eb-env}}* using *${{inputs.github-env}}* Github environment was successfull. <http://${{steps.get-eb-env-cname.outputs.aws_eb_env_cname}}|View deployment>"
+                    "text": "🚀 Deployment to AWS EB environment *${{inputs.aws-eb-env}}* using *${{inputs.github-env}}* Github environment was successfull. <http://${{steps.get-eb-env-cname.outputs.aws_eb_env_cname}}|View deployment>"
                   }
                 }
               ]
