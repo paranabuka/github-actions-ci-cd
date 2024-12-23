@@ -25,4 +25,12 @@ describe("Home", () => {
 
     expect(docH).toBeInTheDocument();
   });
+
+  it("renders some text", async () => {
+    render(await Home());
+
+    const someText = screen.getByText("Some text");
+
+    expect(someText).toBeInTheDocument();
+  });
 });
