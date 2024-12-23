@@ -53,7 +53,9 @@ jobs:
       - name: Set release version
         if: steps.changesets.outputs.published == 'true'
         id: set-version
-        run: echo "version=${{fromJson(steps.changesets.outputs.publishedPackages)[0].version}}" >> GITHUB_OUTPUT
+        run: |
+          version=${{fromJson(steps.changesets.outputs.publishedPackages)[0].version}}
+          echo "version=$version" >> $GITHUB_OUTPUT
       - name: Notify on Slack when new release is created
         if: steps.changesets.outputs.published == 'true'
         uses: slackapi/slack-github-action@v1.24.0
