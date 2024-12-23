@@ -121,11 +121,12 @@ jobs:
       - name: Get EB env CNAME
         id: get-eb-env-cname
         run: |
-          echo "aws_eb_env_cname=$(aws elasticbeanstalk describe-environments \
+          env_cname=$(aws elasticbeanstalk describe-environments \
             --application-name ${{vars.AWS_EB_APP_NAME}} \
             --environment-names ${{inputs.aws-eb-env}} \
             --query "Environments[0].CNAME" \
-            --output text)" >> $GITHUB_OUTPUT
+            --output text)
+          echo "aws_eb_env_cname=http://$env_cname" >> $GITHUB_OUTPUT
       - name: Notify on Slack
         uses: slackapi/slack-github-action@v1.24.0
         continue-on-error: true
