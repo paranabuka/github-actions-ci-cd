@@ -1,5 +1,11 @@
 # nextjs-starter
 
+## 0.2.1
+
+### Patch Changes
+
+- c366150: Improve logging on CD workflow
+
 ## 0.2.0
 
 ### Minor Changes
