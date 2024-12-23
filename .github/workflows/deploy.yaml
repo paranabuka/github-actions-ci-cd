@@ -9,7 +9,7 @@ on:
         default: "nextjs-starter-staging"
       github-env:
         description: "Github environment"
-        type: string
+        type: environment
         required: true
         default: "staging"
   workflow_call:
