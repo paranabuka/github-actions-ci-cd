@@ -73,11 +73,13 @@ jobs:
       - name: Get EB env name
         id: get-eb-env-name
         run: |
-          echo "aws_eb_env=$(aws elasticbeanstalk describe-environments \
+          env_name=$(aws elasticbeanstalk describe-environments \
           --application-name ${{vars.AWS_EB_APP_NAME}} \
           --environment-names ${{inputs.aws-eb-env}} \
           --query "Environments[0].EnvironmentName" \
-          --output text)" >> $GITHUB_OUTPUT
+          --output text)
+          echo $env_name
+          echo "aws_eb_env=" >> $GITHUB_OUTPUT
       - name: Get EB env status
         id: get-eb-env-status
         run: |
