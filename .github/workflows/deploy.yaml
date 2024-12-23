@@ -99,7 +99,7 @@ jobs:
           eb create ${{inputs.aws-eb-env}} \
           --instance-types ${{vars.AWS_EB_ENV_INSTANCE_TYPES}} \
           --cname ${{inputs.aws-eb-env}} \
-          --env-vars FLAGSMITH_KEY=${{secrets.FLAGSMITH_KEY}}
+          --envvars FLAGSMITH_KEY=${{secrets.FLAGSMITH_KEY}}
       - name: Deploy on existing environment
         if: >
           steps.get-eb-env-name.outputs.aws_eb_env == inputs.aws-eb-env ||
