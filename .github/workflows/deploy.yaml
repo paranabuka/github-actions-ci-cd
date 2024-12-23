@@ -74,20 +74,20 @@ jobs:
         id: get-eb-env-name
         run: |
           env_name=$(aws elasticbeanstalk describe-environments \
-          --application-name ${{vars.AWS_EB_APP_NAME}} \
-          --environment-names ${{inputs.aws-eb-env}} \
-          --query "Environments[0].EnvironmentName" \
-          --output text)
-          echo $env_name
-          echo "aws_eb_env=" >> $GITHUB_OUTPUT
+            --application-name ${{vars.AWS_EB_APP_NAME}} \
+            --environment-names ${{inputs.aws-eb-env}} \
+            --query "Environments[0].EnvironmentName" \
+            --output text)
+          echo "aws_eb_env=$env_name" >> $GITHUB_OUTPUT
       - name: Get EB env status
         id: get-eb-env-status
         run: |
-          echo "aws_eb_env_status=$(aws elasticbeanstalk describe-environments \
-          --application-name ${{vars.AWS_EB_APP_NAME}} \
-          --environment-names ${{inputs.aws-eb-env}} \
-          --query "Environments[0].Status" \
-          --output text)" >> $GITHUB_OUTPUT
+          env_status=$(aws elasticbeanstalk describe-environments \
+            --application-name ${{vars.AWS_EB_APP_NAME}} \
+            --environment-names ${{inputs.aws-eb-env}} \
+            --query "Environments[0].Status" \
+            --output text)
+          echo "aws_eb_env_status=$env_status" >> $GITHUB_OUTPUT
       - name: Initialize EB
         run: |
           eb init ${{vars.AWS_EB_APP_NAME}} \
@@ -96,7 +96,7 @@ jobs:
       - name: Setup storage settings
         if: >
           steps.get-eb-env-name.outputs.aws_eb_env == 'None' ||
-          steps.get-eb-env-name.outputs.aws_eb_env_status == 'Terminate'
+          steps.get-eb-env-name.outputs.aws_eb_env_status == 'Terminated'
         run: |
           touch .elasticbeanstalk/storage.config
           echo "option_settings:" >> .elasticbeanstalk/storage.config
@@ -105,7 +105,7 @@ jobs:
       - name: Create a new environment
         if: >
           steps.get-eb-env-name.outputs.aws_eb_env == 'None' ||
-          steps.get-eb-env-name.outputs.aws_eb_env_status == 'Terminate'
+          steps.get-eb-env-name.outputs.aws_eb_env_status == 'Terminated'
         run: |
           eb create ${{inputs.aws-eb-env}} \
           --instance-types ${{vars.AWS_EB_ENV_INSTANCE_TYPES}} \
@@ -114,7 +114,7 @@ jobs:
       - name: Deploy on existing environment
         if: >
           steps.get-eb-env-name.outputs.aws_eb_env == inputs.aws-eb-env ||
-          steps.get-eb-env-name.outputs.aws_eb_env_status != 'Terminate'
+          steps.get-eb-env-name.outputs.aws_eb_env_status != 'Terminated'
         run: eb deploy ${{inputs.aws-eb-env}}
       - name: Get EB env CNAME
         id: get-eb-env-cname
