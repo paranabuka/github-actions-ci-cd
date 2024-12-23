@@ -50,6 +50,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
       - name: Set release version
+        if: steps.changesets.outputs.published == 'true'
         id: set-version
         run: |
           version=${{fromJson(steps.changesets.outputs.publishedPackages)[0].version}}
