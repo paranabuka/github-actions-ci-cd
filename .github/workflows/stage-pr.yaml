@@ -38,7 +38,7 @@ jobs:
               inputs: {
                 "aws-eb-env": `nextjs-starter-pr-${context.issue.number}`,
                 "github-env": "staging",
-                "pull_request_ref": `${context.issue.number}`
+                "pull-request-ref": `${context.issue.number}`
               }
             })
             console.log(response)

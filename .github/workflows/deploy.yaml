@@ -12,6 +12,9 @@ on:
         type: environment
         required: true
         default: "staging"
+      pull-request-ref:
+        description: "Pull request is being deployed"
+        type: number
   workflow_call:
     inputs:
       aws-eb-env:
@@ -24,9 +27,6 @@ on:
         type: string
         required: true
         default: "staging"
-      pull_request_ref:
-        description: "Pull request is being deployed"
-        type: number
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}-${{inputs.aws-eb-env}}-${{inputs.github-env}}
