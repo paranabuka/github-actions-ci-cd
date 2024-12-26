@@ -132,7 +132,7 @@ jobs:
         if: success() && steps.check-env.outputs.should_terminate == 'true'
         with:
           script: |
-            const comment = `### 🪦 Environment terminated successfully.
+            const comment = `### 🪦 Environment terminated successfully.`;
 
             github.rest.issues.createComment({
               owner: context.repo.owner,
