@@ -33,7 +33,7 @@ jobs:
             const response = await github.rest.actions.createWorkflowDispatch({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              workflow: "deploy.yaml",
+              workflow_id: "deploy.yaml",
               ref: "${{steps.get-ref.outputs.result}}",
               inputs: {
                 "aws-eb-env": `nextjs-starter-pr-${context.issue.number}`,
