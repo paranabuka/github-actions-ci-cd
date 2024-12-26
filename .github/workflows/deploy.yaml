@@ -24,6 +24,9 @@ on:
         type: string
         required: true
         default: "staging"
+      pull_request_ref:
+        description: "Pull request is being deployed"
+        type: number
 
 concurrency:
   group: ${{github.workflow}}-${{github.ref}}-${{inputs.aws-eb-env}}-${{inputs.github-env}}
@@ -32,6 +35,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-22.04
+    permissions:
+      pull-requests: write
     environment:
       name: ${{inputs.github-env}}
       url: ${{steps.get-eb-env-cname.outputs.aws_eb_env_cname}}
@@ -51,6 +56,23 @@ jobs:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws-region: ${{vars.AWS_REGION}}
+      - name: Update pull request (start)
+        uses: actions/github-script@v7
+        if: inputs.pull_request_ref
+        continue-on-error: true
+        with:
+          script: |
+            const comment = `### ⌛ Deployment in progress...
+
+            [You can monitor the progress here.](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}})
+            `;
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{inputs.pull_request_ref}},
+              body: comment
+            })
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node environment
@@ -146,6 +168,37 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+      - name: Update pull request (success)
+        uses: actions/github-script@v7
+        if: success() && inputs.pull_request_ref
+        with:
+          script: |
+            const comment = `### 🚀 Deployment completed.
+
+            You can view the deployed environment here: ${{steps.get-eb-env-cname.outputs.aws_eb_env_cname}}`;
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{inputs.pull_request_ref}},
+              body: comment
+            })
+      - name: Update pull request (failure)
+        uses: actions/github-script@v7
+        if: failure() && inputs.pull_request_ref
+        continue-on-error: true
+        with:
+          script: |
+            const comment = `### 🔴 Deployment failed.
+
+            [View logs](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}})`;
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{inputs.pull_request_ref}},
+              body: comment
+            })
       - name: Abort if cancelled
         if: cancelled() && steps.install-eb-cli.conclusion == 'success'
         run: eb abort ${{inputs.aws-eb-env}}
