@@ -92,7 +92,7 @@ jobs:
             const response = await github.rest.repos.listDeployments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: ${{github.event.pull_request.head.ref || steps.get-ref.outputs.result}},
+              ref: "${{github.event.pull_request.head.ref || steps.get-ref.outputs.result}}",
               per_page: 1
             })
             console.log(response.data)
