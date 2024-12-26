@@ -56,9 +56,8 @@ jobs:
       - name: Check if env should be terminated
         id: check-env
         run: |
-          env_found=${{steps.get-eb-env-name.outputs.aws_eb_env != 'None'}}
-          not_terminated=${{steps.get-eb-env-status.outputs.aws_eb_env_status != 'Terminated'}}
-          echo "should_terminate=$($env_found && $not_terminated)" >> $GITHUB_OUTPUT
+          should_terminate=${{steps.get-eb-env-name.outputs.aws_eb_env != 'None' && steps.get-eb-env-status.outputs.aws_eb_env_status != 'Terminated'}}
+          echo "should_terminate=$should_terminate" >> $GITHUB_OUTPUT
       - name: Terminate environment
         if: steps.check-env.outputs.should_terminate == 'true'
         run: eb terminate ${{steps.get-eb-env-name.outputs.aws_eb_env}} --force
