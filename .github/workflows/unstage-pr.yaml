@@ -124,7 +124,7 @@ jobs:
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: $PULL_REQUEST_REF,
+              issue_number: "${{env.PULL_REQUEST_REF}}",
               body: comment
             })
       - name: Update pull request (success)
@@ -137,6 +137,6 @@ jobs:
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: $PULL_REQUEST_REF,
+              issue_number: "${{env.PULL_REQUEST_REF}}",
               body: comment
             })
