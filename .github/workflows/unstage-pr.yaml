@@ -35,6 +35,11 @@ jobs:
       - name: Install EB CLI
         id: install-eb-cli
         run: pip install awsebcli
+      - name: Initialize EB
+        run: |
+          eb init ${{vars.AWS_EB_APP_NAME}} \
+          --platform "${{vars.AWS_EB_PLATFORM}}" \
+          --region ${{vars.AWS_REGION}}
       - name: Get EB env name
         id: get-eb-env-name
         run: |
