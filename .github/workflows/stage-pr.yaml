@@ -36,7 +36,7 @@ jobs:
               workflow_id: "deploy.yaml",
               ref: "${{steps.get-ref.outputs.result}}",
               inputs: {
-                "aws-eb-env": `nextjs-starter-pr-${context.issue.number}`,
+                "aws-eb-env": `${vars.AWS_EB_APP_NAME}-pr-${context.issue.number}`,
                 "github-env": "staging",
                 "pull-request-ref": `${context.issue.number}`
               }
