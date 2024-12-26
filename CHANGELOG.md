@@ -1,5 +1,11 @@
 # nextjs-starter
 
+## 0.2.3
+
+### Patch Changes
+
+- d36068f: Minor improvements on CD workflow
+
 ## 0.2.2
 
 ### Patch Changes
