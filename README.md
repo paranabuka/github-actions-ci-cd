@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# CI/CD on Github Actions - Learning Project
 
-## Getting Started
+This repository is focused on learning and implementing GitHub Actions for Continuous Integration (CI) and Continuous Deployment (CD) using a simple Next.js application.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- Automated testing (unit and E2E)
+- Check for formatting, linting (ESLint) and type erors (Typescript)
+- App version control and changelog management (changeset files)
+- Upload artifacts (build & test results)
+- Production and Staging deployment workflows
+- Deploy (and destroy) pull request branch environment
+- [Slack](https://slack.com/) notifications (on pull request, test failure and deployments)
+- Feature flags
+
+## Technologies Used
+
+- GitHub Actions
+- AWS Elastic Beanstalk (for deployment)
+- Flagsmith (for feature flagging)
+- [Next.js](https://nextjs.org/)
+- [Jest](https://jestjs.io/) and [Playwright](https://playwright.dev/) (for unit and end-to-end tests respectively)
+- [Prettier](https://prettier.io/) (for code formatting)
+
+## Prerequisites
+
+Make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/)
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
+- A GitHub repository with Actions enabled
+- AWS CLI configured with necessary permissions
+- Elastic Beanstalk CLI installed
+
+## Getting started
+
+This repo uses a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+1. Install dependencies:
+
+   ```sh
+   npm install
+   # or
+   yarn install
+   ```
+
+2. Run the development server:
+   ```sh
+   npm run dev
+   # or
+   yarn dev
+   ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-[http://localhost:3000/api/hello](http://localhost:3000/api/hello) is an endpoint that uses [Route Handlers](https://beta.nextjs.org/docs/routing/route-handlers). This endpoint can be edited in `app/api/hello/route.ts`.
+### Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+You can run the following scripts for various development tasks:
 
-## Learn More
+- `npm run build` - Builds the Next.js application for production.
+- `npm run lint` - Runs ESLint to check for code quality issues.
+- `npm run typecheck` - Runs TypeScript compiler to check for type errors.
+- `npm run format` - Checks for formatting issues using Prettier.
+- `npm run format:fix` - Automatically formats the code using Prettier.
+- `npm run test` - Runs Jest tests and generates a coverage report.
+- `npm run test:e2e` - Runs Playwright tests for end-to-end testing.
 
-To learn more about Next.js, take a look at the following resources:
+## GitHub Actions Workflows
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This repository includes some GitHub Actions workflows to automate the build, test, and deployment process.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### CI Workflow
 
-## Deploy on Vercel
+Runs formatting, type error checking, linting and (both unit and end-to-end) tests on every pull request.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+PUT_IMAGE_HERE
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+_Continuous Integration workflow plan_
+
+### CD Workflow - Staging and Production environments
+
+Deploys the application to the appropriate environment based on the branch and workflow trigger. Additionally, it manages the creation of version pull requests and releases, ensuring a structured deployment process.
+
+PUT_IMAGE_HERE
+
+_Continuous Delivery workflow plan - Staging and Production environments_
+
+### CD Workflow - PR branch environment
+
+Deploys the application to a temporary environment based on the pull request branch when a user comments /deploy on the pull request. Automatically manages environment cleanup by destroying the deployment when the pull request is merged or closed.
+
+PUT_IMAGE_HERE
+
+_Continuous Delivery workflow plan - PR branch environment_
