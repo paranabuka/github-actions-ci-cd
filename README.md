@@ -75,22 +75,22 @@ This repository includes some GitHub Actions workflows to automate the build, te
 
 Runs formatting, type error checking, linting and (both unit and end-to-end) tests on every pull request.
 
-PUT_IMAGE_HERE
+![image](https://github.com/user-attachments/assets/d3e96c4c-8470-459c-9f0f-8bfdccee9e0b)
 
-_Continuous Integration workflow plan_
+> _Continuous Integration workflow plan_
 
 ### CD Workflow - Staging and Production environments
 
 Deploys the application to the appropriate environment based on the branch and workflow trigger. Additionally, it manages the creation of version pull requests and releases, ensuring a structured deployment process.
 
-PUT_IMAGE_HERE
+![image](https://github.com/user-attachments/assets/49215c7b-31f4-4a5c-bcb0-a0f62b6403ac)
 
-_Continuous Delivery workflow plan - Staging and Production environments_
+> _Continuous Delivery workflow plan - Staging and Production environments_
 
 ### CD Workflow - PR branch environment
 
 Deploys the application to a temporary environment based on the pull request branch when a user comments /deploy on the pull request. Automatically manages environment cleanup by destroying the deployment when the pull request is merged or closed.
 
-PUT_IMAGE_HERE
+![image](https://github.com/user-attachments/assets/df8f4a7e-815d-48b7-9169-c92d8e41315f)
 
-_Continuous Delivery workflow plan - PR branch environment_
+> _Continuous Delivery workflow plan - PR branch environment_
